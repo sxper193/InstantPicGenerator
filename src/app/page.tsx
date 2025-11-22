@@ -78,7 +78,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col relative overflow-hidden">
+    <main className="min-h-screen flex flex-col relative overflow-x-hidden">
       {/* Structured Data for SEO */}
       <script
         type="application/ld+json"
@@ -143,7 +143,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full max-w-7xl mx-auto p-4 md:p-8 relative z-10">
+      <div className="w-full min-h-[calc(100vh-100px)] flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 max-w-7xl mx-auto p-4 md:p-8 relative z-10">
         
         {/* Left Column: Visual Demo (Desktop only) */}
         <div className="hidden lg:block w-full max-w-md relative">
@@ -223,7 +223,7 @@ export default function Home() {
       </div>
 
       {/* SEO Content Section */}
-      <section className="max-w-4xl mx-auto px-6 pb-12 text-[#2D3436] relative z-10">
+      <section className="max-w-4xl mx-auto px-6 pb-24 pt-12 text-[#2D3436] relative z-10">
         <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-dashed border-[#2D3436]/20">
           <h3 className="text-2xl font-heading font-bold mb-4">Why Use AI Polaroid?</h3>
           <div className="grid md:grid-cols-2 gap-8 font-body text-lg text-gray-600">
