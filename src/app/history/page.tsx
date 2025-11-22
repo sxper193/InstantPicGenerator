@@ -6,6 +6,7 @@ import { Download, Trash2, ArrowLeft, X } from "lucide-react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { db, HistoryItem } from "@/lib/storage"
+import { ANALYTICS_EVENTS, logAnalyticsEvent } from "@/lib/analytics"
 
 export default function HistoryPage() {
     const [history, setHistory] = useState<HistoryItem[]>([])
@@ -26,6 +27,7 @@ export default function HistoryPage() {
     }, [])
 
     const deleteFromHistory = async (id: string) => {
+        logAnalyticsEvent(ANALYTICS_EVENTS.DELETE_HISTORY_ITEM)
         await db.deleteHistory(id)
         setHistory(history.filter(item => item.id !== id))
         if (selectedImage?.id === id) {
@@ -35,6 +37,9 @@ export default function HistoryPage() {
 
     const clearHistory = async () => {
         if (confirm("Are you sure you want to clear all history?")) {
+            logAnalyticsEvent(ANALYTICS_EVENTS.CLEAR_HISTORY, {
+                count: history.length
+            })
             await db.clearHistory()
             setHistory([])
         }
@@ -86,7 +91,10 @@ export default function HistoryPage() {
                                 <div
                                     className="group relative transform transition-transform hover:scale-105 hover:z-10 cursor-pointer"
                                     style={{ rotate: `${index % 2 === 0 ? -2 : 2}deg` }}
-                                    onClick={() => setSelectedImage(item)}
+                                    onClick={() => {
+                                        setSelectedImage(item)
+                                        logAnalyticsEvent(ANALYTICS_EVENTS.VIEW_HISTORY)
+                                    }}
                                 >
                                     <div className="bg-white p-4 pb-16 border-[3px] border-[#2D3436] shadow-[8px_8px_0px_#2D3436] rounded-sm">
                                         <Image
@@ -131,18 +139,42 @@ export default function HistoryPage() {
                                 </button>
 
                                 <div className="grid md:grid-cols-2 gap-8 p-4">
-                                    <div className="flex items-center justify-center">
-                                        <div className="bg-white p-4 pb-20 border-[3px] border-[#2D3436] shadow-[8px_8px_0px_#2D3436] rounded-sm transform rotate-[-2deg]">
-                                            <Image
-                                                src={selectedImage.image}
-                                                alt="Selected Polaroid"
-                                                width={400}
-                                                height={500}
-                                                className="rounded-sm border border-gray-200"
-                                            />
-                                            <div className="absolute bottom-6 left-0 w-full text-center font-handwriting text-gray-600 text-2xl">
-                                                {new Date(selectedImage.timestamp).toLocaleDateString()}
+                                    <div className="flex items-center justify-center min-h-[400px]">
+                                        <div className="relative">
+                                            {/* AI Result - Big */}
+                                            <div className="bg-white p-4 pb-20 border-[3px] border-[#2D3436] shadow-[8px_8px_0px_#2D3436] rounded-sm transform rotate-[-2deg] relative z-10 max-w-full">
+                                                <Image
+                                                    src={selectedImage.image}
+                                                    alt="Selected Polaroid"
+                                                    width={400}
+                                                    height={500}
+                                                    className="rounded-sm border border-gray-200 w-auto h-auto max-h-[60vh] object-contain"
+                                                />
+                                                <div className="absolute bottom-6 left-0 w-full text-center font-handwriting text-gray-600 text-2xl">
+                                                    {new Date(selectedImage.timestamp).toLocaleDateString()}
+                                                </div>
                                             </div>
+
+                                            {/* Original Image - Small Floating */}
+                                            {selectedImage.originalImage && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0, x: -20 }}
+                                                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                                                    transition={{ delay: 0.2, type: "spring" }}
+                                                    className="absolute -top-6 -right-12 z-20"
+                                                >
+                                                    <div className="bg-white p-2 pb-6 border-[3px] border-[#2D3436] shadow-[4px_4px_0px_rgba(0,0,0,0.1)] rounded-sm w-[120px] transform rotate-6 hover:rotate-12 transition-transform origin-bottom-left">
+                                                        <Image 
+                                                            src={selectedImage.originalImage} 
+                                                            alt="Original" 
+                                                            width={100} 
+                                                            height={100}
+                                                            className="rounded-sm bg-gray-100 object-cover aspect-square"
+                                                        />
+                                                        <p className="text-[10px] font-bold text-center mt-1 text-gray-400">Original</p>
+                                                    </div>
+                                                </motion.div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -154,7 +186,7 @@ export default function HistoryPage() {
                                             </p>
                                             {selectedImage.description && (
                                                 <div className="mt-4 p-4 bg-white rounded-xl border-[2px] border-[#2D3436] border-dashed">
-                                                    <p className="font-handwriting text-lg text-gray-700">"{selectedImage.description}"</p>
+                                                    <p className="font-handwriting text-lg text-gray-700">&quot;{selectedImage.description}&quot;</p>
                                                 </div>
                                             )}
                                         </div>
@@ -162,6 +194,7 @@ export default function HistoryPage() {
                                         <div className="flex gap-4">
                                             <button
                                                 onClick={() => {
+                                                    logAnalyticsEvent(ANALYTICS_EVENTS.DOWNLOAD_HISTORY_ITEM)
                                                     const link = document.createElement('a')
                                                     link.href = selectedImage.image
                                                     link.download = `polaroid-${selectedImage.id}.png`

@@ -4,66 +4,25 @@ import "regenerator-runtime/runtime"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Download, Share2, RotateCcw, Instagram, Sparkles } from "lucide-react"
 import { PolaroidCamera } from "@/components/polaroid-camera"
 import { db, HistoryItem } from "@/lib/storage"
+import { ANALYTICS_EVENTS, logAnalyticsEvent } from "@/lib/analytics"
+
+// Global set to track processed files across component remounts (Strict Mode)
+// This persists as long as the page/module is loaded in memory
+const processedFiles = new Set<string>()
 
 export default function ResultPage() {
     const router = useRouter()
     const [resultImage, setResultImage] = useState<string | null>(null)
     const [originalImage, setOriginalImage] = useState<string | null>(null)
+    const [fileName, setFileName] = useState<string>("")
     const [isLoading, setIsLoading] = useState(true)
     const [isGenerating, setIsGenerating] = useState(false)
     const [showShareMenu, setShowShareMenu] = useState(false)
-
-    // Load pending data and call generation API
-    useEffect(() => {
-        const generateImage = async () => {
-            try {
-                const pendingFileData = await db.get<{ name: string; type: string; size: number; data: string }>("pending_file_data")
-                const pendingOriginal = await db.get<string>("pending_original")
-                console.log("Loaded from IndexedDB:", pendingFileData ? "File data found" : "No file data")
-                setIsLoading(false)
-                if (!pendingFileData) {
-                    router.push("/")
-                    return
-                }
-                setIsGenerating(true)
-                if (pendingOriginal) setOriginalImage(pendingOriginal)
-                // Convert base64 back to File
-                const base64ToFile = (base64: string, filename: string, mimeType: string): File => {
-                    const base64Data = base64.split(',')[1] || base64
-                    const binary = atob(base64Data)
-                    const bytes = new Uint8Array(binary.length)
-                    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
-                    return new File([bytes], filename, { type: mimeType })
-                }
-                const file = base64ToFile(pendingFileData.data, pendingFileData.name, pendingFileData.type)
-                const formData = new FormData()
-                formData.append("file", file)
-                const response = await fetch("/api/generate", { method: "POST", body: formData })
-                const data = await response.json()
-                if (data.success && data.images && data.images.length > 0) {
-                    setTimeout(() => {
-                        setResultImage(data.images[0])
-                        setIsGenerating(false)
-                        saveToHistory(data.images[0], pendingOriginal, data.description)
-                        db.delete("pending_file_data")
-                        db.delete("pending_original")
-                    }, 1000)
-                } else {
-                    alert(`Generation failed: ${data.error}`)
-                    router.push("/")
-                }
-            } catch (e) {
-                console.error(e)
-                alert("Generation error, please try again")
-                router.push("/")
-            }
-        }
-        generateImage()
-    }, [router])
 
     const saveToHistory = async (image: string, original: string | null, description: string) => {
         try {
@@ -80,9 +39,113 @@ export default function ResultPage() {
         }
     }
 
-    const handleAnimationComplete = () => {
-        // No extra state needed for now
-    }
+    // Load pending data and call generation API
+    useEffect(() => {
+        const generateImage = async () => {
+            try {
+                const pendingFileData = await db.get<{ name: string; type: string; size: number; data: string }>("pending_file_data")
+                const pendingOriginal = await db.get<string>("pending_original")
+                
+                if (!pendingFileData) {
+                    // No data, redirect
+                    console.log("No pending file data found")
+                    // Small delay to prevent flash if it's just slow DB
+                    setIsLoading(false)
+                    router.push("/")
+                    return
+                }
+
+                // Create a unique key for this file processing session
+                // Using name + size + a rough timestamp window or just name+size if unique enough for this context
+                // Since user just uploaded it, name+size is a good proxy for identity in this session
+                const fileKey = `${pendingFileData.name}-${pendingFileData.size}`
+
+                // Check if we are already processing this file (Strict Mode fix)
+                if (processedFiles.has(fileKey)) {
+                    console.log("File already processing/processed, skipping duplicate request:", fileKey)
+                    // If it's already processed but we don't have resultImage yet, it might be the other effect instance running.
+                    // We just return and let that instance finish.
+                    return
+                }
+
+                // Mark as processing IMMEDIATELY
+                processedFiles.add(fileKey)
+                
+                console.log("Starting generation for:", fileKey)
+                setIsLoading(false)
+                setIsGenerating(true)
+                setFileName(pendingFileData.name)
+
+                logAnalyticsEvent(ANALYTICS_EVENTS.GENERATE_START, {
+                    file_type: pendingFileData.type,
+                    file_size: pendingFileData.size,
+                })
+                
+                if (pendingOriginal) setOriginalImage(pendingOriginal)
+                
+                // Convert base64 back to File
+                const base64ToFile = (base64: string, filename: string, mimeType: string): File => {
+                    const base64Data = base64.split(',')[1] || base64
+                    const binary = atob(base64Data)
+                    const bytes = new Uint8Array(binary.length)
+                    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+                    return new File([bytes], filename, { type: mimeType })
+                }
+                const file = base64ToFile(pendingFileData.data, pendingFileData.name, pendingFileData.type)
+                const formData = new FormData()
+                formData.append("file", file)
+                
+                const response = await fetch("/api/generate", { method: "POST", body: formData })
+                const data = await response.json()
+                
+                if (data.success && data.images && data.images.length > 0) {
+                    // Delay result display slightly for smoother transition
+                    setTimeout(() => {
+                        setResultImage(data.images[0])
+                        setIsGenerating(false)
+                        saveToHistory(data.images[0], pendingOriginal, data.description)
+                        
+                        logAnalyticsEvent(ANALYTICS_EVENTS.GENERATE_SUCCESS, {
+                            description_length: data.description?.length || 0,
+                        })
+
+                        // Clean up DB
+                        db.delete("pending_file_data")
+                        db.delete("pending_original")
+                        
+                        // Note: We do NOT remove from processedFiles here. 
+                        // If we did, and the component remounted (e.g. hot reload), it might try to fetch again?
+                        // Actually, since we deleted from DB, next fetch attempt will fail at DB check and redirect home.
+                        // That's fine.
+                    }, 1000)
+                } else {
+                    alert(`Generation failed: ${data.error}`)
+                    
+                    logAnalyticsEvent(ANALYTICS_EVENTS.GENERATE_ERROR, {
+                        error: data.error,
+                    })
+
+                    // If failed, maybe we should allow retry?
+                    processedFiles.delete(fileKey) 
+                    router.push("/")
+                }
+            } catch (e) {
+                console.error(e)
+                alert("Generation error, please try again")
+
+                logAnalyticsEvent(ANALYTICS_EVENTS.GENERATE_ERROR, {
+                    error: e instanceof Error ? e.message : "Unknown error",
+                })
+
+                // Allow retry on error
+                // But since we need to re-read DB, and we might redirect...
+                router.push("/")
+            }
+        }
+        
+        generateImage()
+        
+    }, [router])
 
     return (
         <main className="min-h-screen flex flex-col bg-[#FDFBF7]">
@@ -103,6 +166,22 @@ export default function ResultPage() {
                         AI Polaroid
                     </h1>
                 </div>
+
+                {/* Desktop Navigation */}
+                <nav className="hidden md:flex items-center gap-6">
+                    <Link href="/about" className="text-lg font-heading font-bold text-[#2D3436] hover:text-[#FF6B6B] transition-colors">
+                        About
+                    </Link>
+                    <Link href="/faq" className="text-lg font-heading font-bold text-[#2D3436] hover:text-[#FF6B6B] transition-colors">
+                        FAQ
+                    </Link>
+                    <Link href="/privacy" className="text-lg font-heading font-bold text-[#2D3436] hover:text-[#FF6B6B] transition-colors">
+                        Privacy
+                    </Link>
+                    <Link href="/terms" className="text-lg font-heading font-bold text-[#2D3436] hover:text-[#FF6B6B] transition-colors">
+                        Terms
+                    </Link>
+                </nav>
             </header>
 
             <div className="flex-1 w-full max-w-md mx-auto p-4 flex flex-col items-center justify-end min-h-[800px] gap-8 pb-12">
@@ -135,19 +214,20 @@ export default function ResultPage() {
                                 <div className="relative">
                                     {/* AI Result - Big */}
                                     <motion.div
-                                        initial={{ y: 300, scale: 0.2, opacity: 0 }}
+                                        initial={{ y: 600, scale: 0.1, opacity: 0 }}
                                         animate={{ y: 0, scale: 1, opacity: 1 }}
                                         transition={{ 
-                                            duration: 1.2, 
+                                            duration: 1.5, 
                                             type: "spring",
-                                            bounce: 0.4
+                                            bounce: 0.2,
+                                            damping: 20
                                         }}
                                         className="relative z-30"
                                     >
                                         <div className="bg-white p-4 pb-16 border-[4px] border-[#2D3436] shadow-[8px_8px_0px_rgba(0,0,0,0.2)] rounded-sm transform -rotate-2 hover:rotate-0 transition-transform duration-300">
                                             <Image 
                                                 src={resultImage} 
-                                                alt="AI Result" 
+                                                alt={`Polaroid style photo generated from user image - ${fileName} - with white border and retro effect`} 
                                                 width={320} 
                                                 height={380}
                                                 className="rounded-sm bg-gray-100 border border-gray-200 object-cover"
@@ -161,7 +241,7 @@ export default function ResultPage() {
                                         <motion.div
                                             initial={{ opacity: 0, scale: 0, x: 50 }}
                                             animate={{ opacity: 1, scale: 1, x: 100, y: 120 }}
-                                            transition={{ delay: 0.8, duration: 0.5, type: "spring" }}
+                                            transition={{ delay: 1.2, duration: 0.5, type: "spring" }}
                                             className="absolute top-0 right-0 z-40"
                                         >
                                             <div className="bg-white p-2 pb-6 border-[3px] border-[#2D3436] shadow-[4px_4px_0px_rgba(0,0,0,0.1)] rounded-sm w-[120px] transform rotate-6 hover:rotate-12 transition-transform">
@@ -182,10 +262,11 @@ export default function ResultPage() {
                                 <motion.div 
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 1.2 }}
+                                    transition={{ delay: 1.8 }}
                                     className="w-full relative z-50 flex flex-col gap-4"
                                 >
                                     <button onClick={() => {
+                                        logAnalyticsEvent(ANALYTICS_EVENTS.DOWNLOAD_IMAGE)
                                         const link = document.createElement('a')
                                         link.href = resultImage!
                                         const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
@@ -196,11 +277,17 @@ export default function ResultPage() {
                                         Download Sticker
                                     </button>
                                     <div className="flex gap-4">
-                                        <button onClick={() => setShowShareMenu(!showShareMenu)} className="btn-retro-secondary flex-1">
+                                        <button onClick={() => {
+                                            setShowShareMenu(!showShareMenu)
+                                            if (!showShareMenu) logAnalyticsEvent(ANALYTICS_EVENTS.SHARE_IMAGE)
+                                        }} className="btn-retro-secondary flex-1">
                                             <Share2 className="w-5 h-5" />
                                             Share
                                         </button>
-                                        <button onClick={() => router.push('/')} className="btn-retro-secondary flex-1">
+                                        <button onClick={() => {
+                                            logAnalyticsEvent(ANALYTICS_EVENTS.CLICK_TRY_AGAIN)
+                                            router.push('/')
+                                        }} className="btn-retro-secondary flex-1">
                                             <RotateCcw className="w-5 h-5" />
                                             Again
                                         </button>
@@ -243,7 +330,7 @@ export default function ResultPage() {
                 </div>
 
                 {/* Camera Area (Bottom - Fixed) */}
-                <div className="flex-none relative z-20 transform scale-90">
+                <div className="flex-none relative z-50 transform scale-90">
                     <PolaroidCamera isProcessing={isGenerating} />
                 </div>
             </div>
