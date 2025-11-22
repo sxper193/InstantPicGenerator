@@ -62,6 +62,17 @@ export class Storage {
         })
     }
 
+    async delete(key: string): Promise<void> {
+        const db = await this.open()
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(STORES.KEYVAL, 'readwrite')
+            const store = transaction.objectStore(STORES.KEYVAL)
+            const request = store.delete(key)
+            request.onerror = () => reject(request.error)
+            request.onsuccess = () => resolve()
+        })
+    }
+
     async addHistory(item: HistoryItem): Promise<void> {
         const db = await this.open()
         return new Promise((resolve, reject) => {

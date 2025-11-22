@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils"
 
 interface UploadZoneProps {
     onFileSelect: (file: File) => void
+    disabled?: boolean
 }
 
-export function UploadZone({ onFileSelect }: UploadZoneProps) {
+export function UploadZone({ onFileSelect, disabled = false }: UploadZoneProps) {
     const [preview, setPreview] = React.useState<string | null>(null)
     const [isDragActive, setIsDragActive] = React.useState(false)
 
@@ -31,6 +32,7 @@ export function UploadZone({ onFileSelect }: UploadZoneProps) {
             'image/webp': []
         },
         maxFiles: 1,
+        disabled: disabled,
         onDragEnter: () => setIsDragActive(true),
         onDragLeave: () => setIsDragActive(false),
         onDropAccepted: () => setIsDragActive(false),

@@ -1,55 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
+import { motion } from "framer-motion"
 
 interface PolaroidCameraProps {
     isProcessing: boolean
-    resultImage: string | null
+    // resultImage and onAnimationComplete are no longer needed for internal logic but kept for interface compatibility if needed, 
+    // though we will make them optional or ignore them.
+    resultImage?: string | null
     onAnimationComplete?: () => void
+    className?: string
 }
 
-export function PolaroidCamera({ isProcessing, resultImage, onAnimationComplete }: PolaroidCameraProps) {
-    const [showPhoto, setShowPhoto] = useState(false)
-
-    useEffect(() => {
-        if (resultImage) {
-            // Start ejection animation shortly after result is available
-            const timer = setTimeout(() => {
-                setShowPhoto(true)
-            }, 100)
-            return () => clearTimeout(timer)
-        } else {
-            setShowPhoto(false)
-        }
-    }, [resultImage])
+export function PolaroidCamera({ isProcessing, className }: PolaroidCameraProps) {
+    // Removed internal photo ejection logic
 
     return (
-        <div className="relative flex flex-col items-center justify-end h-[500px] w-full max-w-md mx-auto">
-            {/* The Photo Ejecting */}
-            <AnimatePresence>
-                {showPhoto && resultImage && (
-                    <motion.div
-                        initial={{ y: 60, opacity: 0, scale: 0.9 }}
-                        animate={{ y: -220, opacity: 1, scale: 1 }}
-                        transition={{ duration: 1.5, type: "spring", bounce: 0.2 }}
-                        onAnimationComplete={onAnimationComplete}
-                        className="absolute z-10 bottom-[180px]"
-                    >
-                        <div className="bg-white p-3 pb-12 border-[3px] border-[#2D3436] shadow-[4px_4px_0px_rgba(0,0,0,0.1)] rounded-sm w-[240px] transform rotate-[-2deg]">
-                            <Image
-                                src={resultImage}
-                                alt="Generated"
-                                width={220}
-                                height={220}
-                                className="rounded-sm bg-gray-100 border border-gray-200"
-                            />
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
+        <div className={`relative flex flex-col items-center justify-end w-[320px] h-[240px] ${className}`}>
             {/* The Camera Body - Retro Pop Style */}
             <div className="relative z-20 w-[320px] h-[240px]">
                 {/* Camera Top */}
