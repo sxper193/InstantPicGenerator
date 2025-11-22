@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius: 0.5rem;
+
+  --font-heading: var(--font-fredoka);
+  --font-body: var(--font-nunito);
+  --font-handwriting: var(--font-patrick);
+}
+
+:root {
+  /* Retro-Pop Craft Palette */
+  --bg-paper: #FDFBF7;
+  --ink-color: #2D3436;
+  --primary-pop: #FF6B6B;
+  --teal-accent: #4ECDC4;
+  --yolk-yellow: #FFE66D;
+
+  --border-width: 3px;
+  --shadow-hard: 5px 5px 0px var(--ink-color);
+  --radius-card: 16px;
+  --radius-btn: 999px;
+
+  /* Tailwind mappings */
+  --background: var(--bg-paper);
+  --foreground: var(--ink-color);
+  --primary: var(--primary-pop);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--teal-accent);
+  --secondary-foreground: #FFFFFF;
+  --muted: #F0F0F0;
+  --muted-foreground: #888888;
+  --accent: var(--yolk-yellow);
+  --accent-foreground: var(--ink-color);
+  --destructive: #FF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: var(--ink-color);
+  --input: #FFFFFF;
+  --ring: var(--primary-pop);
+}
+
+body {
+  background-color: var(--bg-paper);
+  color: var(--ink-color);
+  font-family: var(--font-body), sans-serif;
+  /* Subtle noise texture */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), sans-serif;
+}
+
+/* --- Custom Utility Classes --- */
+
+/* 1. The Magic Button (Soft Brutalism) */
+.btn-retro {
+  @apply bg-primary text-white font-black text-lg px-8 py-4 rounded-full transition-all duration-100 cursor-pointer flex items-center justify-center gap-2;
+  border: var(--border-width) solid var(--ink-color);
+  box-shadow: var(--shadow-hard);
+}
+
+.btn-retro:hover {
+  @apply brightness-110;
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0px var(--ink-color);
+}
+
+.btn-retro:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px var(--ink-color);
+}
+
+/* Secondary Retro Button */
+.btn-retro-secondary {
+  @apply bg-white text-foreground font-bold text-base px-6 py-3 rounded-full transition-all duration-100 cursor-pointer flex items-center justify-center gap-2;
+  border: var(--border-width) solid var(--ink-color);
+  box-shadow: 3px 3px 0px var(--ink-color);
+}
+
+.btn-retro-secondary:hover {
+  @apply bg-gray-50;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--ink-color);
+}
+
+.btn-retro-secondary:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px var(--ink-color);
+}
+
+/* 2. Polaroid Card */
+.polaroid-frame {
+  @apply bg-white p-4 pb-12 border border-gray-200 shadow-xl relative;
+  transform: rotate(-2deg);
+  transition: transform 0.3s ease;
+}
+
+.polaroid-frame:hover {
+  transform: rotate(0deg) scale(1.02);
+  z-index: 10;
+}
+
+.polaroid-caption {
+  font-family: var(--font-handwriting), cursive;
+  @apply text-gray-600 text-xl mt-4 text-center block transform rotate-1;
+}
+
+/* 3. Upload Zone */
+.upload-zone-retro {
+  @apply border-dashed border-4 border-gray-300 rounded-3xl bg-white/50 transition-all duration-300;
+}
+
+.upload-zone-retro[data-active="true"] {
+  @apply border-primary border-solid bg-white scale-105 shadow-xl;
+  animation: bounce 0.5s cubic-bezier(0.36, 0, 0.66, -0.56) infinite alternate;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+/* 4. Flash Effect */
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.flash-effect {
+  @apply fixed inset-0 bg-white z-[100] pointer-events-none;
+  animation: flash 0.5s ease-out forwards;
+}
+
+/* General Card */
+.card-retro {
+  @apply bg-white rounded-2xl border-[3px] border-[#2D3436] shadow-[5px_5px_0px_#2D3436];
+}
