@@ -163,12 +163,12 @@ export default function Home() {
                 <PolaroidCamera isProcessing={false} />
             </div>
 
-            {/* Original Photo (Comparison Demo) */}
+            {/* Original Photo (Animation: Enters Camera) */}
             <motion.div
-                initial={{ opacity: 0, x: -50, scale: 0.8, rotate: -12 }}
-                animate={{ opacity: 1, x: -220, scale: 1, rotate: -6 }}
-                transition={{ delay: 1.5, duration: 0.8, type: "spring" }}
-                className="absolute top-24 left-1/2 z-0"
+                initial={{ opacity: 0, y: 300, x: "-50%", scale: 1 }}
+                animate={{ opacity: [0, 1, 1, 0], y: -50, x: "-50%", scale: 0.8 }}
+                transition={{ duration: 2, times: [0, 0.2, 0.8, 1], ease: "easeInOut" }}
+                className="absolute bottom-0 left-1/2 z-10"
             >
                 <div className="bg-white p-2 border-[3px] border-[#2D3436] shadow-[4px_4px_0px_rgba(0,0,0,0.1)] rounded-sm w-[140px]">
                     <Image
@@ -180,19 +180,15 @@ export default function Home() {
                     />
                     <div className="text-center font-heading font-bold text-xs mt-1 text-[#2D3436]">Original</div>
                 </div>
-                {/* Arrow pointing to Result */}
-                <div className="absolute top-1/2 -right-8 text-[#2D3436] text-2xl font-bold animate-pulse">
-                    ➜
-                </div>
             </motion.div>
 
-            {/* Sample Photo Animation */}
+            {/* Sample Photo Animation (Result Ejection) */}
             <motion.div
                 initial={{ y: 0, opacity: 0, scale: 0.5, rotate: -2 }}
                 animate={{ y: -150, opacity: 1, scale: 1, rotate: 2 }}
                 transition={{ 
                     duration: 1.5,
-                    delay: 0.5,
+                    delay: 1.8,
                     type: "spring",
                     bounce: 0.4
                 }}
