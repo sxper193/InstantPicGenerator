@@ -4,6 +4,8 @@ import "./globals.css";
 import { Footer } from "@/components/footer";
 import { FirebaseAnalytics } from "@/components/firebase-analytics";
 import { FirebasePerformance } from "@/components/firebase-performance";
+import { AdAnalytics } from "@/components/ad-analytics";
+import Script from "next/script";
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -81,6 +83,14 @@ export default function RootLayout({
       <body
         className={`${fredoka.variable} ${nunito.variable} ${patrickHand.variable} antialiased min-h-screen flex flex-col pb-24`}
       >
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1037678912973871"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+        
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -98,6 +108,7 @@ export default function RootLayout({
         <Footer />
         <FirebaseAnalytics />
         <FirebasePerformance />
+        <AdAnalytics />
       </body>
     </html>
   );

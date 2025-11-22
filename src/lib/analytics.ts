@@ -24,6 +24,10 @@ export const ANALYTICS_EVENTS = {
   
   // Navigation
   NAVIGATE: "navigate",
+
+  // Advertising
+  ADSENSE_SCRIPT_LOADED: "adsense_script_loaded",
+  AD_BLOCKER_DETECTED: "ad_blocker_detected",
 } as const;
 
 export const logAnalyticsEvent = (eventName: string, params?: Record<string, any>) => {
