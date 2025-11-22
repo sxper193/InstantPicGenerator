@@ -25,17 +25,26 @@
 
 ### 元数据与内容
 *   **Meta 标签优化**: 
-    *   Title: `AI Polaroid Photo Generator - Free Instant Photos` (已优化长度 < 60 chars)
-    *   Description: `Turn photos into aesthetic 3D chibi Polaroid prints instantly...` (已优化长度 < 160 chars)
-*   **结构化数据**: 植入了 JSON-LD (`WebApplication`, `FAQPage`, `CollectionPage`)。
-*   **图片 SEO**: 实现了动态 Alt Text 逻辑。
+    *   Title: `AI Polaroid Photo Generator - Free Instant Photos Online` (已优化长度)
+    *   Description: `Turn photos into aesthetic 3D chibi Polaroid prints instantly...`
+    *   **Canonical Tag**: 已配置，防止重复内容问题。
+*   **结构化数据**: 
+    *   `WebApplication`: 应用信息。
+    *   `Organization`: 品牌信息。
+    *   `FAQPage`: 常见问题。
+*   **内容扩充**: 首页增加了 "Why Use AI Polaroid" 和 "How It Works" 文本版块，解决 Thin Content 问题。
 
 ### 域名与安全 (DNS)
-*   **SPF 记录**: 为了提升域名信誉度（和消除 SEO 报告警告），建议在 Cloudflare DNS 中添加 TXT 记录：
-    *   类型: `TXT`
-    *   名称: `@`
-    *   内容: `v=spf1 include:_spf.google.com ~all` (如果不发送邮件，这是一个通用的安全配置)
-*   **Ads.txt**: 已添加 `ads.txt` 占位文件以消除 SEO 工具的警告。
+建议在 Cloudflare DNS 中添加以下记录以提升信誉：
+
+1.  **SPF (TXT)**
+    *   Name: `@`
+    *   Content: `v=spf1 include:_spf.google.com ~all`
+2.  **DMARC (TXT)**
+    *   Name: `_dmarc`
+    *   Content: `v=DMARC1; p=none; rua=mailto:admin@instantpicgenerator.com` (将邮箱替换为您自己的，或者不加 rua 部分: `v=DMARC1; p=none;`)
+
+*   **Ads.txt**: 已添加占位文件。
 
 ---
 

@@ -143,7 +143,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full max-w-7xl mx-auto p-4 md:p-8 relative">
+      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full max-w-7xl mx-auto p-4 md:p-8 relative z-10">
         
         {/* Left Column: Visual Demo (Desktop only) */}
         <div className="hidden lg:block w-full max-w-md relative">
@@ -221,6 +221,39 @@ export default function Home() {
           </div>
         </motion.div>
       </div>
+
+      {/* SEO Content Section */}
+      <section className="max-w-4xl mx-auto px-6 pb-12 text-[#2D3436] relative z-10">
+        <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-8 border-2 border-dashed border-[#2D3436]/20">
+          <h3 className="text-2xl font-heading font-bold mb-4">Why Use AI Polaroid?</h3>
+          <div className="grid md:grid-cols-2 gap-8 font-body text-lg text-gray-600">
+            <div>
+              <h4 className="font-bold text-[#2D3436] mb-2">Instant Transformation</h4>
+              <p className="mb-4">
+                Our advanced AI technology instantly transforms your regular digital photos into unique, 
+                hand-drawn style 3D chibi art. Perfect for social media profile pictures, stickers, or digital scrapbooking.
+              </p>
+              <h4 className="font-bold text-[#2D3436] mb-2">Classic Retro Vibes</h4>
+              <p>
+                Get that authentic instant film look without the expensive camera. Every generated photo comes 
+                framed in the iconic white border, complete with handwritten-style dating for that nostalgic feel.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-bold text-[#2D3436] mb-2">100% Free & Private</h4>
+              <p className="mb-4">
+                No hidden costs, no watermarks, and no signup required. We value your privacy - 
+                images are processed securely and we do not store your personal photos on our servers.
+              </p>
+              <h4 className="font-bold text-[#2D3436] mb-2">How It Works</h4>
+              <p>
+                Simply upload a photo, and watch our AI camera &quot;develop&quot; your picture. 
+                In seconds, you&apos;ll have a cute, stylized masterpiece ready to download or share with friends.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }

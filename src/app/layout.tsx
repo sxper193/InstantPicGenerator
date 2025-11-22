@@ -25,8 +25,11 @@ const patrickHand = Patrick_Hand({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://instantpicgenerator.com'),
+  alternates: {
+    canonical: '/',
+  },
   title: {
-    default: "AI Polaroid Photo Generator - Free Instant Photos",
+    default: "AI Polaroid Photo Generator - Free Instant Photos Online",
     template: "%s | AI Polaroid Maker"
   },
   description: "Turn photos into aesthetic 3D chibi Polaroid prints instantly. Free online tool with retro filters, white borders & custom text. No signup needed.",
@@ -38,7 +41,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://instantpicgenerator.com',
     siteName: 'AI Polaroid Photo Generator',
-    title: 'AI Polaroid Photo Generator - Free Instant Photos',
+    title: 'AI Polaroid Photo Generator - Free Instant Photos Online',
     description: 'Turn photos into aesthetic 3D chibi Polaroid prints instantly. Free online tool with retro filters, white borders & custom text. No signup needed.',
     images: [
       {
@@ -51,7 +54,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Polaroid Photo Generator - Free Instant Photos',
+    title: 'AI Polaroid Photo Generator - Free Instant Photos Online',
     description: 'Turn photos into aesthetic 3D chibi Polaroid prints instantly. Free online tool with retro filters, white borders & custom text. No signup needed.',
     images: ['/sample-polaroid.png'],
   },
@@ -78,6 +81,19 @@ export default function RootLayout({
       <body
         className={`${fredoka.variable} ${nunito.variable} ${patrickHand.variable} antialiased min-h-screen flex flex-col pb-24`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "AI Polaroid",
+              "url": "https://instantpicgenerator.com",
+              "logo": "https://instantpicgenerator.com/sample-polaroid.png",
+              "sameAs": []
+            })
+          }}
+        />
         {children}
         <Footer />
         <FirebaseAnalytics />
