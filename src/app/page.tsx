@@ -166,9 +166,9 @@ export default function Home() {
             {/* Original Photo (Comparison Demo) */}
             <motion.div
                 initial={{ opacity: 0, x: -50, scale: 0.8, rotate: -12 }}
-                animate={{ opacity: 1, x: -260, scale: 1, rotate: -6 }}
+                animate={{ opacity: 1, x: -220, scale: 1, rotate: -6 }}
                 transition={{ delay: 1.5, duration: 0.8, type: "spring" }}
-                className="absolute top-1/2 -translate-y-1/2 left-1/2 z-0"
+                className="absolute top-24 left-1/2 z-0"
             >
                 <div className="bg-white p-2 border-[3px] border-[#2D3436] shadow-[4px_4px_0px_rgba(0,0,0,0.1)] rounded-sm w-[140px]">
                     <Image
@@ -189,7 +189,7 @@ export default function Home() {
             {/* Sample Photo Animation */}
             <motion.div
                 initial={{ y: 0, opacity: 0, scale: 0.5, rotate: -2 }}
-                animate={{ y: -180, opacity: 1, scale: 1, rotate: 2 }}
+                animate={{ y: -150, opacity: 1, scale: 1, rotate: 2 }}
                 transition={{ 
                     duration: 1.5,
                     delay: 0.5,
