@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
  
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://ai-polaroid.vercel.app' // 替换为实际域名
+  const baseUrl = 'https://instantpicgenerator.com'
 
   return [
     {

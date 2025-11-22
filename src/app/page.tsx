@@ -100,7 +100,7 @@ export default function Home() {
               "Custom text"
             ],
             "description": "Transform your digital photos into aesthetic Polaroid-style prints in seconds. The best free online Polaroid picture generator with classic white borders, retro film filters, and custom text.",
-            "screenshot": "https://ai-polaroid.vercel.app/sample-polaroid.png"
+            "screenshot": "https://instantpicgenerator.com/sample-polaroid.png"
           })
         }}
       />

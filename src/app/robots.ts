@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/api/',
     },
-    sitemap: 'https://ai-polaroid.vercel.app/sitemap.xml', // 假设部署在 Vercel，需要替换为实际域名
+    sitemap: 'https://instantpicgenerator.com/sitemap.xml',
   }
 }
 

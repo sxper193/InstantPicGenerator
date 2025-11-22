@@ -24,7 +24,7 @@ const patrickHand = Patrick_Hand({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ai-polaroid.vercel.app'), // Replace with actual domain
+  metadataBase: new URL('https://instantpicgenerator.com'),
   title: {
     default: "AI Polaroid Photo Generator - Create Instant Photos Online Free",
     template: "%s | AI Polaroid Photo Generator"
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://ai-polaroid.vercel.app',
+    url: 'https://instantpicgenerator.com',
     siteName: 'AI Polaroid Photo Generator',
     title: 'AI Polaroid Photo Generator - Create Instant Photos Online Free',
     description: 'Transform your digital photos into aesthetic Polaroid-style prints in seconds. The best free online Polaroid picture generator with classic white borders, retro film filters, and custom text. No signup required.',

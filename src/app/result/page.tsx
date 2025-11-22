@@ -231,6 +231,7 @@ export default function ResultPage() {
                                                 width={320} 
                                                 height={380}
                                                 className="rounded-sm bg-gray-100 border border-gray-200 object-cover"
+                                                sizes="(max-width: 768px) 100vw, 320px"
                                                 priority
                                             />
                                         </div>

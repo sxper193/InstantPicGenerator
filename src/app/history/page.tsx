@@ -7,6 +7,7 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { db, HistoryItem } from "@/lib/storage"
 import { ANALYTICS_EVENTS, logAnalyticsEvent } from "@/lib/analytics"
+import Script from "next/script"
 
 export default function HistoryPage() {
     const [history, setHistory] = useState<HistoryItem[]>([])
@@ -45,8 +46,29 @@ export default function HistoryPage() {
         }
     }
 
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "My AI Polaroid Collection",
+      "description": "View your past AI-generated 3D chibi polaroid stickers and original photos.",
+      "url": "https://instantpicgenerator.com/history",
+      "mainEntity": history.map(item => ({
+        "@type": "ImageObject",
+        "contentUrl": item.image,
+        "name": item.description || "AI Generated Polaroid",
+        "datePublished": new Date(item.timestamp).toISOString(),
+        "thumbnailUrl": item.image,
+        "isFamilyFriendly": true,
+      }))
+    }
+
     return (
         <div className="min-h-screen bg-[#FDFBF7] p-4 md:p-8">
+            <Script
+                id="json-ld-history"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <div className="max-w-7xl mx-auto">
                 <header className="flex items-center justify-between mb-12">
                     <Link href="/" className="flex items-center gap-2 text-[#2D3436] hover:text-[#FF6B6B] transition-colors group">
@@ -103,6 +125,7 @@ export default function HistoryPage() {
                                             width={300}
                                             height={400}
                                             className="rounded-sm bg-gray-100 border border-gray-200"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />
                                         <div className="absolute bottom-4 left-0 w-full text-center font-handwriting text-gray-600 text-xl">
                                             {new Date(item.timestamp).toLocaleDateString()}
