@@ -165,18 +165,18 @@ export default function Home() {
 
             {/* Original Photo (Comparison Demo) */}
             <motion.div
-                initial={{ opacity: 0, x: -50, scale: 0.8 }}
-                animate={{ opacity: 1, x: -140, scale: 1 }}
-                transition={{ delay: 1.8, duration: 0.8 }}
-                className="absolute top-1/2 -translate-y-1/2 left-1/2 z-10"
+                initial={{ opacity: 0, x: -50, scale: 0.8, rotate: -12 }}
+                animate={{ opacity: 1, x: -260, scale: 1, rotate: -6 }}
+                transition={{ delay: 1.5, duration: 0.8, type: "spring" }}
+                className="absolute top-1/2 -translate-y-1/2 left-1/2 z-0"
             >
-                <div className="bg-white p-2 border-[3px] border-[#2D3436] shadow-[4px_4px_0px_rgba(0,0,0,0.1)] rounded-sm w-[120px] -rotate-6">
+                <div className="bg-white p-2 border-[3px] border-[#2D3436] shadow-[4px_4px_0px_rgba(0,0,0,0.1)] rounded-sm w-[140px]">
                     <Image
-                        src="https://placehold.co/400x400/FF6B6B/FFFFFF/png?text=Original"
+                        src="/sample-original.png"
                         alt="Original sample photo"
                         width={120}
                         height={120}
-                        className="rounded-sm"
+                        className="rounded-sm object-cover aspect-square"
                     />
                     <div className="text-center font-heading font-bold text-xs mt-1 text-[#2D3436]">Original</div>
                 </div>
