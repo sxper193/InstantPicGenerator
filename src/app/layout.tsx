@@ -26,10 +26,10 @@ const patrickHand = Patrick_Hand({
 export const metadata: Metadata = {
   metadataBase: new URL('https://instantpicgenerator.com'),
   title: {
-    default: "AI Polaroid Photo Generator - Create Instant Photos Online Free",
-    template: "%s | AI Polaroid Photo Generator"
+    default: "AI Polaroid Photo Generator - Free Instant Photos",
+    template: "%s | AI Polaroid Maker"
   },
-  description: "Transform your digital photos into aesthetic Polaroid-style prints in seconds. The best free online Polaroid picture generator with classic white borders, retro film filters, and custom text. No signup required.",
+  description: "Turn photos into aesthetic 3D chibi Polaroid prints instantly. Free online tool with retro filters, white borders & custom text. No signup needed.",
   keywords: ["polaroid generator", "instant photo maker", "photo to polaroid", "retro photo frame", "white border app", "aesthetic photo editor", "polaroid template", "instant film effect", "3D chibi", "AI sticker maker"],
   authors: [{ name: "AI Polaroid Team" }],
   creator: "AI Polaroid",
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://instantpicgenerator.com',
     siteName: 'AI Polaroid Photo Generator',
-    title: 'AI Polaroid Photo Generator - Create Instant Photos Online Free',
-    description: 'Transform your digital photos into aesthetic Polaroid-style prints in seconds. The best free online Polaroid picture generator with classic white borders, retro film filters, and custom text. No signup required.',
+    title: 'AI Polaroid Photo Generator - Free Instant Photos',
+    description: 'Turn photos into aesthetic 3D chibi Polaroid prints instantly. Free online tool with retro filters, white borders & custom text. No signup needed.',
     images: [
       {
         url: '/sample-polaroid.png',
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Polaroid Photo Generator - Create Instant Photos Online Free',
-    description: 'Transform your digital photos into aesthetic Polaroid-style prints in seconds. The best free online Polaroid picture generator with classic white borders, retro film filters, and custom text.',
+    title: 'AI Polaroid Photo Generator - Free Instant Photos',
+    description: 'Turn photos into aesthetic 3D chibi Polaroid prints instantly. Free online tool with retro filters, white borders & custom text. No signup needed.',
     images: ['/sample-polaroid.png'],
   },
   robots: {

@@ -107,14 +107,14 @@ export default function Home() {
 
       {/* Header */}
       <header className="p-6 flex items-center justify-between relative z-50 max-w-7xl mx-auto w-full">
-        <div className="flex items-center gap-3 cursor-pointer group">
+        <Link href="/" className="flex items-center gap-3 cursor-pointer group" aria-label="Go to Home">
           <div className="w-12 h-12 bg-[#FF6B6B] rounded-full flex items-center justify-center border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] group-hover:scale-110 transition-transform">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div className="text-3xl font-heading font-bold text-[#2D3436] tracking-tight group-hover:text-[#FF6B6B] transition-colors">
             AI Polaroid
           </div>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
